@@ -13,12 +13,15 @@ public class GridView extends View {
     private int numColumns, numRows;
     private int cellWidth, cellHeight;
     private Paint black = new Paint();
+    private Paint gray = new Paint();
     private boolean[][] cellChecked;
 
     public GridView(Context context) {
         this(context, null);
         black.setColor(Color.BLACK);
         black.setStrokeWidth(8);
+        gray.setColor(Color.DKGRAY);
+        gray.setStrokeWidth(2);
     }
 
     public GridView(Context context, AttributeSet attrs) {
@@ -79,14 +82,18 @@ public class GridView extends View {
         int xOffset = (width - boardSize) / 2;
         int yOffset = (height - boardSize) / 2;
 
-        for (int i = 0; i < gridSize; i++) {
+        for (int i = 0; i <= gridSize; i++) {
             startX = xOffset + i*gridSpacing;
             startY = yOffset;
 
             stopX = startX;
             stopY = startY + boardSize;
 
-            canvas.drawLine(startX, startY, stopX, stopY, black);
+            if (i % 3 == 0){
+                canvas.drawLine(startX, startY, stopX, stopY, black);
+            } else {
+                canvas.drawLine(startX, startY, stopX, stopY, gray);
+            }
         }
 
         for (int i = 0; i <= gridSize; i++) {
@@ -96,7 +103,11 @@ public class GridView extends View {
             stopX = startX + boardSize;
             stopY = startY;
 
-            canvas.drawLine(startX, startY, stopX, stopY, black);
+            if (i % 3 == 0){
+                canvas.drawLine(startX, startY, stopX, stopY, black);
+            } else {
+                canvas.drawLine(startX, startY, stopX, stopY, gray);
+            }
         }
 
 //        canvas.drawColor(Color.WHITE);
