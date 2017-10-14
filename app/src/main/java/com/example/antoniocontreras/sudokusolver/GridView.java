@@ -1,6 +1,5 @@
 package com.example.antoniocontreras.sudokusolver;
 
-
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -9,16 +8,17 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Toast;
 
 import static android.content.ContentValues.TAG;
 
 public class GridView extends View {
     private int numColumns, numRows;
+    private int[] focusedCell = {-1, -1};
     private int cellWidth, cellHeight;
     private Paint black = new Paint();
     private Paint gray = new Paint();
-    private Paint blue = new Paint();
-    private boolean[][] cellChecked;
+    private Paint green = new Paint();
 
     public GridView(Context context) {
         this(context, null);
@@ -26,8 +26,7 @@ public class GridView extends View {
         black.setStrokeWidth(8);
         gray.setColor(Color.DKGRAY);
         gray.setStrokeWidth(2);
-        blue.setColor(Color.BLUE);
-        blue.setTextSize(40);
+        green.setColor(Color.GREEN);
     }
 
     public GridView(Context context, AttributeSet attrs) {
@@ -66,7 +65,11 @@ public class GridView extends View {
         cellWidth = getWidth() / numColumns;
         cellHeight = getHeight() / numRows;
 
-        cellChecked = new boolean[numColumns][numRows];
+        if (cellWidth > cellHeight) {
+            cellWidth = cellHeight;
+        } else {
+            cellHeight = cellWidth;
+        }
 
         invalidate();
     }
@@ -87,11 +90,16 @@ public class GridView extends View {
         int boardSize = gridSize * gridSpacing;
 
         int xOffset = (width - boardSize) / 2;
-        int yOffset = (height - boardSize) / 2;
+        int yOffset = 0;
 
-        String s = "1";
-        String t = "2";
+        // Handle selected cell
+        if (focusedCell[0] != -1 && focusedCell[1] != -1) {
+            int c = focusedCell[0];
+            int r = focusedCell[1];
+            canvas.drawRect(c*cellWidth, r*cellHeight, (c+1)*cellWidth, (r+1)*cellHeight, green);
+        }
 
+        // Draw vertical lines
         for (int i = 0; i <= gridSize; i++) {
             startX = xOffset + i*gridSpacing;
             startY = yOffset;
@@ -100,14 +108,13 @@ public class GridView extends View {
             stopY = startY + boardSize;
 
             if (i % 3 == 0){
-                canvas.drawLine(startX, startY, stopX, stopY, black);
-                //canvas.drawText(s, startX+10, startY+40, blue);
+                canvas.drawLine(startX, startY, stopX, stopY, black); // major axis
             } else {
-                canvas.drawLine(startX, startY, stopX, stopY, gray);
-                //canvas.drawText(t, startX+10, startY+40, blue);
+                canvas.drawLine(startX, startY, stopX, stopY, gray); // minor axis
             }
         }
 
+        // Draw horizontal lines
         for (int i = 0; i <= gridSize; i++) {
             startX = xOffset;
             startY = yOffset + i*gridSpacing;
@@ -116,22 +123,13 @@ public class GridView extends View {
             stopY = startY;
 
             if (i % 3 == 0){
-                canvas.drawLine(startX, startY, stopX, stopY, black);
-                //if (i != 9)
-                //    canvas.drawText(s, startX+10, startY+40, blue);
+                canvas.drawLine(startX, startY, stopX, stopY, black); // major axis
             } else {
-                canvas.drawLine(startX, startY, stopX, stopY, gray);
-                //canvas.drawText(t, startX+10, startY+40, blue);
+                canvas.drawLine(startX, startY, stopX, stopY, gray); // minor axis
             }
         }
 
-        for (int row = 0; row < 9; row++) {
-            for (int col = 0; col < 9; col++) {
-                if (cellChecked[row][col]){
-                    canvas.drawText(s, xOffset+row*gridSpacing, yOffset+col*gridSpacing, blue);
-                }
-            }
-        }
+
     }
 
     @Override
@@ -140,9 +138,14 @@ public class GridView extends View {
             int column = (int)(event.getX() / cellWidth);
             int row = (int)(event.getY() / cellHeight);
 
-            Log.i("CellSelected", "onTouchEvent: " + column + ", " + row);
+            if (column < 9 && row < 9 && column >= 0 && row >= 0){
+                Toast.makeText(getContext(), "[" + column + ", " + row + "]", Toast.LENGTH_SHORT).show();
+                focusedCell[0] = column;
+                focusedCell[1] = row;
+            } else {
+                Toast.makeText(getContext(), "Out of bounds", Toast.LENGTH_SHORT).show();
+            }
 
-            cellChecked[column][row] = !cellChecked[column][row];
             invalidate();
         }
 
