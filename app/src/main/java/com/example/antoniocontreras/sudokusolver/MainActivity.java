@@ -9,9 +9,11 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        GridView g = new GridView(this);
-        g.setNumColumns(9);
-        g.setNumRows(9);
-        setContentView(g);
+        //GridView g = new GridView(this);
+        //g.setNumColumns(9);
+        //g.setNumRows(9);
+        //setContentView(g);
+
+        
     }
 }
