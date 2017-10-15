@@ -13,7 +13,7 @@ import android.widget.Toast;
 import static android.content.ContentValues.TAG;
 
 public class GridView extends View {
-    private int numColumns, numRows;
+    private int numColumns = 9, numRows = 9;
     private int[] focusedCell = {-1, -1};
     private int cellWidth, cellHeight;
     private Paint black = new Paint();
@@ -77,6 +77,11 @@ public class GridView extends View {
     // See https://stackoverflow.com/questions/42280172/having-trouble-drawing-a-square-grid-for-an-android-game
     @Override
     protected void onDraw(Canvas canvas) {
+        black.setColor(Color.BLACK);
+        black.setStrokeWidth(8);
+        gray.setColor(Color.DKGRAY);
+        gray.setStrokeWidth(2);
+        green.setColor(Color.GREEN);
         float startX;
         float stopX;
         float startY;
